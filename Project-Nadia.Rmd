@@ -7,7 +7,7 @@ output:
 date: "2026-10-01"
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
@@ -21,4 +21,157 @@ When you click the **Knit** button a document will be generated that includes bo
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
+```{r include = TRUE}
+
 library(tidyverse)
+library(janitor)
+
+```
+
+```{r eval = TRUE }
+data <- read.csv2("data/data.csv")
+```
+
+
+## Introduction
+
+This data set is exploring the different demographics of students in higher education. The data set was designed with the purpose of helping students that are at risk in order to offer further educational support. The data came from "Early Prediction of student’s Performance in Higher" by Mónica V. Martins, Daniel Tolledo, Jorge Machado, Luís M. T. Baptista, and Valentim Realinho. The data was found on UC Irvene Machine Learning Repository, "https://archive.ics.uci.edu/dataset/697/predict+students+dropout+and+academic+success". The data was collected from 2008 to 2019, the researcher were about to gather the data by combining several data sets together from different sources. Each row of the represents a student and their duration at a higher education school for one year, there are 4424 rows in the data set. I will be trying to create a predictive model to decipher weather there is a student will drop out, stay enrolled, or graduate based on their demographics. I plan on identifying which factors are associated with a students success or failure at these institutions. The variables I will be taking into account to help answer my research question of identifying which factors are associates with academic success are; martial status, course, previous qualifications, parent's education level, gender, admission grade, age of enrollment, parents occupation, educational special needs, scholarship holder and tuition fees, target. As a college student, I am interested in whether identifiable patterns in students backgrounds relate to academic success. For this proposal, I treat students who remain enrolled or graduate as academically successful, and students who drop out as at risk.
+
+## Variables selection
+The data set contains 36 predictor variables, so I narrowed my focus to those that describe a student’s background and circumstances at or near enrollment. This fits the dataset’s purpose of identifying at-risk students early, before academic performance data are available. I selected demographic variables, and two financial variables scholarship holder and tuition fees up to date. I excluded first and second semester course performance variables, since they would obscure the role of background factors. Nationality was also excluded since the data set seemed to mix in nationality as well languages making it difficult to distinguish nationality of each student. I also excluded economic variables such as unemployment, inflation, GDP since they describe the economy rather than individual students.
+
+## Cleaning and Tidying Data
+The data set required some basic cleaning with such as re-coding gender from numerical values to categorical value. Martial status also needed to be re- coded to from numerical values and nationality was included to have North American counties such as US, Canada, and Mexico and all other countries classified as other. The data set also needed to be filtered for NA values in the selected columns, and have column names cleaned. 
+
+
+```{r include = TRUE}
+students <- data |>
+  clean_names() |>
+  select(marital_status, 
+         course,
+         previous_qualification, 
+         mother_s_qualification, father_s_qualification, 
+         mother_s_occupation, father_s_occupation, 
+         gender, 
+         admission_grade, 
+         age_at_enrollment,
+         educational_special_needs,
+         scholarship_holder,
+         tuition_fees_up_to_date,
+         target
+         ) |>
+  mutate(
+    gender = case_when(
+      gender == "1" ~ "Male",
+      gender == "0" ~ "Female",
+      TRUE             ~ as.character(gender)
+    ),
+    
+    marital_status = case_when (
+      marital_status == 1 ~ "single",
+      marital_status == 2 ~ "married",
+      marital_status == 3 ~ "widower",
+      marital_status == 4 ~ "divorced",
+      marital_status == 5 ~ "facto union",
+      marital_status == 6 ~ "legally seperated",
+      TRUE                  ~ as.character(marital_status)
+    ),
+    
+    
+    course = case_when(
+      course == 33   ~ "Biofuel Production Tech",
+      course == 171  ~ "Animation & Multimedia Design",
+      course == 8014 ~ "Social Service (evening)",
+      course == 9003 ~ "Agronomy",
+      course == 9070 ~ "Communication Design",
+      course == 9085 ~ "Veterinary Nursing",
+      course == 9119 ~ "Informatics Engineering",
+      course == 9130 ~ "Equinculture",
+      course == 9147 ~ "Management",
+      course == 9238 ~ "Social Service",
+      course == 9254 ~ "Tourism",
+      course == 9500 ~ "Nursing",
+      course == 9556 ~ "Oral Hygiene",
+      course == 9670 ~ "Advertising & Marketing Mgmt",
+      course == 9773 ~ "Journalism & Communication",
+      course == 9853 ~ "Basic Education",
+      course == 9991 ~ "Management (evening)",
+      TRUE           ~ as.character(course)
+    ),
+    
+    previous_qualification = case_when(
+        previous_qualification %in% c(2, 3, 4, 5, 6, 40, 43) ~ "Higher Education",
+        previous_qualification %in% c(1, 9, 10, 12, 14, 15)  ~ "Secondary Education",
+        previous_qualification %in% c(39, 42)                ~ "Technical Education",
+        previous_qualification %in% c(19, 38)                ~ "Basic Education",
+        TRUE                                                 ~ NA
+    ),
+    
+    mother_s_qualification = case_when(
+      mother_s_qualification %in% c(2, 3, 4, 5, 6, 40, 41, 42, 43, 44) ~ "Higher Education",
+      mother_s_qualification %in% c(1, 9, 10, 12, 14, 18, 22)          ~ "Secondary Education",
+      mother_s_qualification %in% c(11,26,27,38,29)                    ~ "Basic Education",
+      mother_s_qualification %in% c(19,29,30,34)                       ~ "Primary Education",
+      TRUE                                                             ~ "Other"
+    ),
+    
+    father_s_qualification = case_when(
+      father_s_qualification %in% c(2, 3, 4, 5, 6, 40, 41, 42, 43, 44) ~ "Higher Education",
+      father_s_qualification %in% c(1, 9, 10, 12, 14, 18, 22)          ~ "Secondary Education",
+      father_s_qualification %in% c(11,26,27,38,29)                    ~ "Basic Education",
+      father_s_qualification %in% c(19,29,30,34)                       ~ "Primary Education",
+      TRUE                                                             ~ "Other"
+    ),
+    
+    mother_s_occupation = case_when(
+      mother_s_occupation %in% c(1,2,3,122,123,124,131,132,134) ~"Professional or Managerial Work",
+      mother_s_occupation %in% c(4,5,141,143,144,151,152,153)   ~"Administration",
+      mother_s_occupation %in% c(6,7,8,171,173,175,192,193,194) ~"Manual Work",
+      mother_s_occupation %in% c(9,10,195)                      ~"Unskilled",
+      mother_s_occupation == 0                                  ~"Student",
+      TRUE                                                      ~"Other"
+    ),
+    
+    father_s_occupation = case_when(
+      father_s_occupation %in% c(1,2,3,122,123,124,131,132,134) ~"Professional or Managerial Work",
+      father_s_occupation %in% c(4,5,141,143,144,151,152,153)   ~"Administration",
+      father_s_occupation %in% c(6,7,8,171,173,175,192,193,194) ~"Manual Work",
+      father_s_occupation %in% c(9,10,195)                      ~"Unskilled",
+      father_s_occupation == 0                                  ~"Student",
+      TRUE                                                      ~"Other"
+    ),
+    
+    educational_special_needs = ifelse(
+      educational_special_needs == 1,  "Yes" , "No"
+    ),
+    
+    tuition_fees_up_to_date = ifelse(
+      tuition_fees_up_to_date == 1,  "Yes" , "No" 
+    ),
+    
+    scholarship_holder = case_when(
+      scholarship_holder == 1  ~ "Yes" , 
+      scholarship_holder == 0  ~ "No",
+      TRUE                     ~ as.character(scholarship_holder)
+    ),
+    
+    target = factor(target, levels = c("Dropout" , "Enrolled" , "Graduated"))
+  )
+```
+
+glimpse(students)
+
+## Exploratory Data Analysis
+
+```{r}
+ggplot(students, mapping = aes(x = target, fill = target)) +
+  geom_bar() +
+  labs(
+    title = "Distribution of Student Outcomes",
+    x = "Academic Status",
+    y = "Number of Students" ,
+    fill = "Outcome"
+  )
+```
+
+
