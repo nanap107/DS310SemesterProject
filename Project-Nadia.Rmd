@@ -44,7 +44,7 @@ The data set contains 36 predictor variables, so I narrowed my focus to those th
 The data set required some basic cleaning with such as re-coding gender from numerical values to categorical value. Martial status also needed to be re- coded to from numerical values and nationality was included to have North American counties such as US, Canada, and Mexico and all other countries classified as other. The data set also needed to be filtered for NA values in the selected columns, and have column names cleaned. 
 
 
-```{r include = TRUE}
+```{r include = FALSE}
 #Recoding and cleaning data
 students <- data |>
   clean_names() |>
@@ -179,7 +179,7 @@ ggplot(students, mapping = aes(x = target, fill = target)) +
 ```
 The distribution shows that there is more students who have graduated than any other category. But it also should be pointed out that dropout is the second highest count of the three outcomes.
 
-```{r eval = FALSE}
+```{r}
 #Numerical Variable Summary 
 students |>
   summarize(Min = min(admission_grade),
@@ -211,7 +211,7 @@ students |>
             )
 
 ggplot(students, aes(x = age_at_enrollment)) +
-  geom_boxplot(fill = "white") +
+  geom_boxplot(fill = "brown") +
   labs(
     title = "Boxplot of Students Age",
     x = "Age of Enrollment"
@@ -233,7 +233,7 @@ ggplot(students, aes(x = tuition_fees_up_to_date, fill = tuition_fees_up_to_date
   )
 ```
 
-The distribution indicates that there are a significant amount of students that have paid there tution fee on time.
+The distribution indicates that there are a significant amount of students that have paid there tuition fee on time. Which can help us later determine if there is a correlation between the amount of students being able to pay for tuition on time has any relation with remaining in higher education. Since there is a higher amount of students who have graduated, this may be something to further investigate.
 
 ```{r}
 #Target vs. admission grade
@@ -261,12 +261,13 @@ ggplot(students, aes(y = target, x = age_at_enrollment, fill = target)) +
  Age of enrollment was another demographic that needed to be examined to see any if there was any correlation between age and outcome. When examining the box plots we can see that those who graduated and stayed enrolled tended to be younger in age than those who dropout. Although we can also see that the 25th and 75th percentiles for the graduated and enrolled are significantly smaller than the dropouts. The max and min of the graduated and enrolled have a very short margin compared to dropouts with a median very close to the 25th percentile.
 
 ```{r}
-ggplot(students, aes(y = educational_special_needs, x = admission_grade, color = target)) +
-  geom_boxplot() +
+ggplot(students, aes(y = tuition_fees_up_to_date, fill = target)) +
+  geom_bar() +
   labs(
-   title = "",
-   y = "Educational Special Needs",
-   x = "Admission Grade (4.0 Scale)"
+   title = "Distribution of Students Tution Fee Status by Outcome",
+   y = "Tution Paided On Time",
+   x = NULL
   )
 ```
 
+We can see from the bar chat the distribution of students who have graduated and stayed enrolled in relation to paying student tuition on time. From this bar chat students who are able to pay for tution on time have a significantly higher distribution of staying enrolled and graduating compared to students who are not paying their tuition on time. This helps indicate that there may be a financial element that affects students ability to stay enrolled and or graduate from higher education.
