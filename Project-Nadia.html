@@ -444,11 +444,126 @@ economy rather than individual students.</p>
 <h2>Cleaning and Tidying Data</h2>
 <p>The data set required some basic cleaning with such as re-coding
 gender from numerical values to categorical value. Martial status also
-needed to be re- coded to from numerical values and nationality was
-included to have North American counties such as US, Canada, and Mexico
-and all other countries classified as other. The data set also needed to
-be filtered for NA values in the selected columns, and have column names
+needed to be re- coded to from numerical values both mother and father’s
+occupation and education level needed to be changed from numerical
+values to categorical values. The data set also needed to be filtered
+for NA values in the selected columns, and have column names
 cleaned.</p>
+<pre class="r"><code>#Recoding and cleaning data
+students &lt;- data |&gt;
+  clean_names() |&gt;
+  select(marital_status, 
+         course,
+         previous_qualification, 
+         mother_s_qualification, father_s_qualification, 
+         mother_s_occupation, father_s_occupation, 
+         gender, 
+         admission_grade, 
+         age_at_enrollment,
+         educational_special_needs,
+         scholarship_holder,
+         tuition_fees_up_to_date,
+         target
+         ) |&gt;
+  mutate(
+    gender = case_when(
+      gender == &quot;1&quot; ~ &quot;Male&quot;,
+      gender == &quot;0&quot; ~ &quot;Female&quot;,
+      TRUE             ~ as.character(gender)
+    ),
+    
+    marital_status = case_when (
+      marital_status == 1 ~ &quot;single&quot;,
+      marital_status == 2 ~ &quot;married&quot;,
+      marital_status == 3 ~ &quot;widower&quot;,
+      marital_status == 4 ~ &quot;divorced&quot;,
+      marital_status == 5 ~ &quot;facto union&quot;,
+      marital_status == 6 ~ &quot;legally seperated&quot;,
+      TRUE                  ~ as.character(marital_status)
+    ),
+    
+    
+    course = case_when(
+      course == 33   ~ &quot;Biofuel Production Tech&quot;,
+      course == 171  ~ &quot;Animation &amp; Multimedia Design&quot;,
+      course == 8014 ~ &quot;Social Service (evening)&quot;,
+      course == 9003 ~ &quot;Agronomy&quot;,
+      course == 9070 ~ &quot;Communication Design&quot;,
+      course == 9085 ~ &quot;Veterinary Nursing&quot;,
+      course == 9119 ~ &quot;Informatics Engineering&quot;,
+      course == 9130 ~ &quot;Equinculture&quot;,
+      course == 9147 ~ &quot;Management&quot;,
+      course == 9238 ~ &quot;Social Service&quot;,
+      course == 9254 ~ &quot;Tourism&quot;,
+      course == 9500 ~ &quot;Nursing&quot;,
+      course == 9556 ~ &quot;Oral Hygiene&quot;,
+      course == 9670 ~ &quot;Advertising &amp; Marketing Mgmt&quot;,
+      course == 9773 ~ &quot;Journalism &amp; Communication&quot;,
+      course == 9853 ~ &quot;Basic Education&quot;,
+      course == 9991 ~ &quot;Management (evening)&quot;,
+      TRUE           ~ as.character(course)
+    ),
+    
+    previous_qualification = case_when(
+        previous_qualification %in% c(2, 3, 4, 5, 6, 40, 43) ~ &quot;Higher Education&quot;,
+        previous_qualification %in% c(1, 9, 10, 12, 14, 15)  ~ &quot;Secondary Education&quot;,
+        previous_qualification %in% c(39, 42)                ~ &quot;Technical Education&quot;,
+        previous_qualification %in% c(19, 38)                ~ &quot;Basic Education&quot;,
+        TRUE                                                 ~ NA
+    ),
+    
+    mother_s_qualification = case_when(
+      mother_s_qualification %in% c(2, 3, 4, 5, 6, 40, 41, 42, 43, 44) ~ &quot;Higher Education&quot;,
+      mother_s_qualification %in% c(1, 9, 10, 12, 14, 18, 22)          ~ &quot;Secondary Education&quot;,
+      mother_s_qualification %in% c(11,26,27,38,29)                    ~ &quot;Basic Education&quot;,
+      mother_s_qualification %in% c(19,29,30,34)                       ~ &quot;Primary Education&quot;,
+      TRUE                                                             ~ &quot;Other&quot;
+    ),
+    
+    father_s_qualification = case_when(
+      father_s_qualification %in% c(2, 3, 4, 5, 6, 40, 41, 42, 43, 44) ~ &quot;Higher Education&quot;,
+      father_s_qualification %in% c(1, 9, 10, 12, 14, 18, 22)          ~ &quot;Secondary Education&quot;,
+      father_s_qualification %in% c(11,26,27,38,29)                    ~ &quot;Basic Education&quot;,
+      father_s_qualification %in% c(19,29,30,34)                       ~ &quot;Primary Education&quot;,
+      TRUE                                                             ~ &quot;Other&quot;
+    ),
+    
+    mother_s_occupation = case_when(
+      mother_s_occupation %in% c(1,2,3,122,123,124,131,132,134) ~&quot;Professional or Managerial Work&quot;,
+      mother_s_occupation %in% c(4,5,141,143,144,151,152,153)   ~&quot;Administration&quot;,
+      mother_s_occupation %in% c(6,7,8,171,173,175,192,193,194) ~&quot;Manual Work&quot;,
+      mother_s_occupation %in% c(9,10,195)                      ~&quot;Unskilled&quot;,
+      mother_s_occupation == 0                                  ~&quot;Student&quot;,
+      TRUE                                                      ~&quot;Other&quot;
+    ),
+    
+    father_s_occupation = case_when(
+      father_s_occupation %in% c(1,2,3,122,123,124,131,132,134) ~&quot;Professional or Managerial Work&quot;,
+      father_s_occupation %in% c(4,5,141,143,144,151,152,153)   ~&quot;Administration&quot;,
+      father_s_occupation %in% c(6,7,8,171,173,175,192,193,194) ~&quot;Manual Work&quot;,
+      father_s_occupation %in% c(9,10,195)                      ~&quot;Unskilled&quot;,
+      father_s_occupation == 0                                  ~&quot;Student&quot;,
+      TRUE                                                      ~&quot;Other&quot;
+    ),
+    
+    educational_special_needs = ifelse(
+      educational_special_needs == 1,  &quot;Yes&quot; , &quot;No&quot;
+    ),
+    
+    tuition_fees_up_to_date = ifelse(
+      tuition_fees_up_to_date == 1,  &quot;Yes&quot; , &quot;No&quot; 
+    ),
+    
+    scholarship_holder = case_when(
+      scholarship_holder == 1  ~ &quot;Yes&quot; , 
+      scholarship_holder == 0  ~ &quot;No&quot;,
+      TRUE                     ~ as.character(scholarship_holder)
+    ),
+    
+    admission_grade = as.numeric(admission_grade) / 200 * 4.0,
+    
+    target = factor(target, levels = c(&quot;Dropout&quot; , &quot;Enrolled&quot; , &quot;Graduate&quot;))
+  )</code></pre>
 <p>glimpse(students)</p>
 </div>
 <div id="exploratory-data-analysis" class="section level2">

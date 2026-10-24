@@ -41,10 +41,10 @@ This data set is exploring the different demographics of students in higher educ
 The data set contains 36 predictor variables, so I narrowed my focus to those that describe a student’s background and circumstances at or near enrollment. This fits the dataset’s purpose of identifying at-risk students early, before academic performance data are available. I selected demographic variables, and two financial variables scholarship holder and tuition fees up to date. I excluded first and second semester course performance variables, since they would obscure the role of background factors. Nationality was also excluded since the data set seemed to mix in nationality as well languages making it difficult to distinguish nationality of each student. I also excluded economic variables such as unemployment, inflation, GDP since they describe the economy rather than individual students.
 
 ## Cleaning and Tidying Data
-The data set required some basic cleaning with such as re-coding gender from numerical values to categorical value. Martial status also needed to be re- coded to from numerical values and nationality was included to have North American counties such as US, Canada, and Mexico and all other countries classified as other. The data set also needed to be filtered for NA values in the selected columns, and have column names cleaned. 
+The data set required some basic cleaning with such as re-coding gender from numerical values to categorical value. Martial status also needed to be re- coded to from numerical values both mother and father's occupation and education level needed to be changed from numerical values to categorical values. The data set also needed to be filtered for NA values in the selected columns, and have column names cleaned. 
 
 
-```{r include = FALSE}
+```{r include = TRUE}
 #Recoding and cleaning data
 students <- data |>
   clean_names() |>
@@ -166,7 +166,7 @@ glimpse(students)
 
 ## Exploratory Data Analysis
 
-```{r}
+```{r echo = TRUE}
 #Response Variable Summary 
 ggplot(students, mapping = aes(x = target, fill = target)) +
   geom_bar() +
@@ -179,7 +179,7 @@ ggplot(students, mapping = aes(x = target, fill = target)) +
 ```
 The distribution shows that there is more students who have graduated than any other category. But it also should be pointed out that dropout is the second highest count of the three outcomes.
 
-```{r}
+```{r echo = TRUE}
 #Numerical Variable Summary 
 students |>
   summarize(Min = min(admission_grade),
@@ -200,7 +200,7 @@ ggplot(students, mapping = aes(x = admission_grade)) +
 
 The distribution for admission grades, shows a slight right skew with a unimodal shape, very few students received a GPA close to a 4.0 with the highest being a 3.8. While most students tend to land in the 2.5 range for GPA, the IQR was 0.338 with a SD of 0.289.
 
-```{r}
+```{r echo = TRUE}
 #Numerical Variable Summary 
 students |>
   summarize(Min = min(age_at_enrollment),
@@ -221,7 +221,7 @@ This distribution is shows that most students tend to be around age 20, with a r
 
 
 
-```{r}
+```{r echo = TRUE}
 #Categorical Predictor 
 ggplot(students, aes(x = tuition_fees_up_to_date, fill = tuition_fees_up_to_date)) +
   geom_bar()+
@@ -235,7 +235,7 @@ ggplot(students, aes(x = tuition_fees_up_to_date, fill = tuition_fees_up_to_date
 
 The distribution indicates that there are a significant amount of students that have paid there tuition fee on time. Which can help us later determine if there is a correlation between the amount of students being able to pay for tuition on time has any relation with remaining in higher education. Since there is a higher amount of students who have graduated, this may be something to further investigate.
 
-```{r}
+```{r echo = TRUE}
 #Target vs. admission grade
 ggplot(students, aes(y = target, x = admission_grade, fill = target)) +
   geom_boxplot() +
@@ -248,7 +248,7 @@ ggplot(students, aes(y = target, x = admission_grade, fill = target)) +
 
 When examining the box plots we can see that all of the outcome have a skew towards the right indicating that the there are a few outlier students with higher GPA's skewing the admissions grade. An interesting note we can examine is that the GPA for students who dropped out compared to students who either stayed enrolled or gradated does not have a significant GPA difference. This could indicate that there many be another variable affecting the enrollment of students instead simply GPA. Although it should be noted that the dropout category does have a higher distribution of low GPA's.
 
-```{r}
+```{r echo = TRUE}
 ggplot(students, aes(y = target, x = age_at_enrollment, fill = target)) +
   geom_boxplot() +
   labs(
@@ -260,7 +260,7 @@ ggplot(students, aes(y = target, x = age_at_enrollment, fill = target)) +
 
  Age of enrollment was another demographic that needed to be examined to see any if there was any correlation between age and outcome. When examining the box plots we can see that those who graduated and stayed enrolled tended to be younger in age than those who dropout. Although we can also see that the 25th and 75th percentiles for the graduated and enrolled are significantly smaller than the dropouts. The max and min of the graduated and enrolled have a very short margin compared to dropouts with a median very close to the 25th percentile.
 
-```{r}
+```{r echo = TRUE}
 ggplot(students, aes(y = tuition_fees_up_to_date, fill = target)) +
   geom_bar() +
   labs(
