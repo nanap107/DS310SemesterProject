@@ -45,6 +45,7 @@ The data set required some basic cleaning with such as re-coding gender from num
 
 
 ```{r include = TRUE}
+#Recoding and cleaning data
 students <- data |>
   clean_names() |>
   select(marital_status, 
@@ -155,7 +156,9 @@ students <- data |>
       TRUE                     ~ as.character(scholarship_holder)
     ),
     
-    target = factor(target, levels = c("Dropout" , "Enrolled" , "Graduated"))
+    admission_grade = as.numeric(admission_grade) / 200 * 4.0,
+    
+    target = factor(target, levels = c("Dropout" , "Enrolled" , "Graduate"))
   )
 ```
 
@@ -174,7 +177,7 @@ ggplot(students, mapping = aes(x = target, fill = target)) +
     fill = "Outcome"
   )
 ```
-The distribution shows.
+The distribution shows that there is more students who have graduated than any other category. But it also should be pointed out that 
 
 ```{r eval = FALSE}
 #Numerical Variable Summary 
@@ -186,7 +189,7 @@ students |>
             IQR = IQR(admission_grade)
             )
 ggplot(students, mapping = aes(x = admission_grade)) +
-  geom_histogram(binwidth = 5, fill = "blue", color = "black" ) +
+  geom_histogram(binwidth = 5, fill = "pink", color = "black" ) +
   labs(
     title = "Distribution of admission grades",
     subtitle = "Scale 0 - 200 points",
@@ -208,7 +211,7 @@ students |>
             )
 
 ggplot(students, aes(x = age_at_enrollment)) +
-  geom_boxplot(fill = "pink") +
+  geom_boxplot(fill = "white") +
   labs(
     title = "Boxplot of Students Age",
     x = "Age of Enrollment"
@@ -231,3 +234,39 @@ ggplot(students, aes(x = tuition_fees_up_to_date, fill = tuition_fees_up_to_date
 ```
 
 The distribution 
+
+```{r}
+#Target vs. admission grade
+ggplot(students, aes(x = target, y = admission_grade, fill = target)) +
+  geom_boxplot() +
+  labs(
+    title = "Admission Grade by Student's Outcome",
+    x = "Outcome Status",
+    y = "Admission Grade (0 - 200 points)"
+  )
+```
+
+This shows us.
+
+```{r}
+ggplot(students, aes(x = target, y = age_at_enrollment, fill = target)) +
+  geom_boxplot() +
+  labs(
+    title = "Distribution of Age of Enrollment by Student's Outcome",
+    x = "Outcome",
+    y = "Age Enrollment in Yrs."
+  )
+```
+
+This 
+
+```{r}
+ggplot(students, aes(x = educational_special_needs, y = admission_grade, color = target)) +
+  geom_point() +
+  labs(
+   title = "",
+   y = "Educational Special Needs",
+   x = "Admission Grade (0-200 pts.)"
+  )
+```
+
