@@ -41,7 +41,7 @@ This data set is exploring the different demographics of students in higher educ
 The data set contains 36 predictor variables, so I narrowed my focus to those that describe a student’s background and circumstances at or near enrollment. This fits the dataset’s purpose of identifying at-risk students early, before academic performance data are available. I selected demographic variables, and two financial variables scholarship holder and tuition fees up to date. I excluded first and second semester course performance variables, since they would obscure the role of background factors. Nationality was also excluded since the data set seemed to mix in nationality as well languages making it difficult to distinguish nationality of each student. I also excluded economic variables such as unemployment, inflation, GDP since they describe the economy rather than individual students.
 
 ## Cleaning and Tidying Data
-The data set required some basic cleaning with such as re-coding gender from numerical values to categorical value. Martial status also needed to be re- coded to from numerical values both mother and father's occupation and education level needed to be changed from numerical values to categorical values. The data set also needed to be filtered for NA values in the selected columns, and have column names cleaned. 
+The data set required some basic cleaning with such as re-coding gender from numerical values to categorical value. Martial status also needed to be re- coded to from numerical values both mother and father's occupation and education level needed to be changed from numerical values to categorical values. The data set also needed to be filtered for select columns, and have column names cleaned. 
 
 
 ```{r include = TRUE}
